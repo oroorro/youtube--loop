@@ -2,24 +2,34 @@ body{
     margin:auto;
     width: 100vw;
     height: 100vh;
-    background-color: antiquewhite;
+    background-color: #E0E5EC;
 }
 
 #wrapper{
     display: flex;
     justify-content: center; 
     align-items: center;
+    position: relative;
+    top: 20px;
+}
+
+
+iframe{
+    border-style: none;
+   
 }
 
 #backgroundContainerCol{
     display: flex;
     flex-direction: column;
+    width: 480px;
     gap: 10px;
 }
 
 #titleContainer{
     width: 100px;
     height: 100px;
+    background-color: #387bbe;
 }
 
 #searchButtonContainer{
@@ -27,19 +37,53 @@ body{
     position: relative;
     left: 40px;
 }
+#searchButtonContainer>input[type="text"]{
+    border-radius: 30px;
+    border: none;
+    height: 30px;
+    box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3);
+}
+#searchButtonContainer>input[type="text"]:active{
+    opacity: 0.4;
+}
+#searchButtonContainer>input[type="text"]:focus{
+    outline: none;
+}
+
+#addressButton{
+    border-radius: 30px;
+    border: none;
+    box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3);
+    font-weight: 600;
+}
+
+#addressButton:active{
+    background-color: #E0E5EC;
+    box-shadow: inset 9px 9px 16px #b5bbc2 , inset -4px -4px 8px #f8fbff;
+}
 
 #fname{
     display: inline-block;
-    width: 100%;
-    
+    width: 80%;
+    height: 20px;
 }
-
 
 #videoContainer{
     display: flex;
     flex-direction: column;
     gap: 15px;
+    padding: 20px;
+    border-radius: 20px;
+    background-color: #d47777;
+    box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3);
 }
+
+.Container{
+    /*box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 5px 5px 9px rgba(94,104,121,0.3);*/
+    box-shadow: 9px 9px 16px #b5bbc2 , -4px -4px 8px #f8fbff;
+
+}
+
 
 #LayerButton-1st{
     display: flex;
@@ -48,30 +92,181 @@ body{
        /* right does not work, again*/
 }
 
+/* min and exit button container*/
+.LayerButton-1st{
+    display: flex;
+    position: relative;
+    gap: 8px;
+       /* right does not work, again*/
+}
+.LayerButton-1st>button{
+    width:60px;
+    height: 30px;
+    border: none;
+    border-radius: 20%;
+    background-color: #E0E5EC;
+    box-shadow: 9px 9px 16px #b5bbc2 , -4px -4px 8px #f8fbff;
+}
+
+.LayerButton-1st>button:active{
+    width:60px;
+    height: 30px;
+    border: none;
+    border-radius: 20%;
+    background-color: #E0E5EC;
+    box-shadow: inset 9px 9px 16px #b5bbc2 , inset -4px -4px 8px #f8fbff;
+}
+
+.LayerButton-1st:nth-child(1):hover{
+    opacity: 0.3;
+}   
+
+.LayerButton-1st>button:nth-child(2):hover{
+    color:darkseagreen;
+}   
+
+#LayerButton-2nd{
+    position: relative;
+    width: 100%;
+    background-color: firebrick;
+}
 
 #LayerButton-3rd{
     display: flex;
     justify-content: center;
 }
 
-.range_container {
+.LayerButton-3rd{
     display: flex;
-    flex-direction: column;
-    width: 80%;
-    margin: 35% auto;
-  }
-  
-.sliders_control {
-    position: relative;
-    min-height: 50px;
+    justify-content: center;
+    gap: 15px;
 }
+
+.LayerButton-3rd>button{
+    width:60px;
+    height: 30px;
+    border: none;
+    border-radius: 20%;
+    background-color: #E0E5EC;
+    box-shadow:  9px 9px 16px #b5bbc2 ,  -4px -4px 8px #f8fbff;
+}
+
+.LayerButton-3rd>button:active{
+    width:60px;
+    height: 30px;
+    border: none;
+    border-radius: 20%;
+    background-color: #E0E5EC;
+    box-shadow: inset 9px 9px 16px #b5bbc2 , inset -4px -4px 8px #f8fbff;
+}
+
+
+#elpasedSlider{
+    width: 100%;
+}
+
+
+#sliders_control{
+    position: relative;
+    width: 100%;
+    height: 30%;
+    background-color: grey;
+}
+
+
+.sliders_control > input[type=range]{
+  
+    /*appearance: none;*/
+   
+    
+  
+}
+
+input[type=range]{
+    appearance: none;
+}
+
+
+#sliderBackground{
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    height: 10px;
+    background-color: #387bbe;
+}
+
+#sliderRangerBlock{
+    width: 97%;
+    left: 6px;
+    position: absolute;
+    top: 0px;
+    height: 10px;
+    background-color: aquamarine;
+}
+
+#sliderFromBlock{
+    position: absolute;
+    top: 0px;
+    
+    height: 10px;
+    background-color: #387bbe;
+}
+
+#fromSlider{
+    
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    pointer-events: none;
+    height: 0;
+    z-index: 1;
+    /*
+    pointer-events: none;
+    width: 25%;
+    position: absolute;
+    background-color: thistle;
+    z-index: 1;
+    */
+   
+}
+
+
+#toSlider{
+    position: absolute;
+    top: 0px;
+    height: 0;
+    width: 100%;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+    /*
+    -webkit-appearance: none;
+    position: absolute;
+    width: 20%;
+    background-color: tomato;
+    */
+}
+
+
+
+input[type=range]::-webkit-slider-runnable-track:active{
+   /* height: 1px; */
+   
+}
+
+/*
+This method display color even after mouse has left
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #5cc58f;
+}
+*/
 
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     pointer-events: all;
-    width: 24px;
-    height: 24px;
-    background-color: #fff;
+    width: 12px;
+    height: 12px;
+    background-color: #d47777;
     border-radius: 50%;
     box-shadow: 0 0 0 1px #C6C6C6;
     cursor: pointer;
@@ -79,41 +274,25 @@ input[type=range]::-webkit-slider-thumb {
 
 input[type=range]::-webkit-slider-thumb:hover {
     background: #f7f7f7;
-  }
+
+}
   
-  input[type=range]::-webkit-slider-thumb:active {
+input[type=range]::-webkit-slider-thumb:active {
+    
+    position: relative;
+     /*These two prevents thumb moving below the slider's line */
+
     box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
     -webkit-box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
-  }
-  
-  input[type="number"] {
-    color: #8a8383;
-    width: 50px;
-    height: 30px;
-    font-size: 20px;
-    border: none;
-  }
-  
-  input[type=number]::-webkit-inner-spin-button, 
-  input[type=number]::-webkit-outer-spin-button {  
-     opacity: 1;
-  }
+}
+
+input[type=range]:focus {
+    outline: none;
+}
 
 
-  input[type="range"] {
-    -webkit-appearance: none; 
-    appearance: none;
-    height: 2px;
-    width: 100%;
-    position: absolute;
-    background-color: #C6C6C6;
-    pointer-events: none;
-  }
-  
-  #fromSlider {
-    height: 0;
-    z-index: 1;
-  }
+
+
 
 #inputcontainer{
     display: flex;
@@ -127,4 +306,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 #minInput{
 
     width: 50px;
+}
+
+#tempHolder{
 }

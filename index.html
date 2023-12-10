@@ -6,8 +6,7 @@
     </html>
     <title> youtube timed loop </title>   
    
-    <link href="./test.css" rel="stylesheet"> 
-    <link rel="stylesheet" href="./noUiSlider-15.7.1/dist/nouislider.min.css">
+    <link href="./style.css" rel="stylesheet"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -18,15 +17,20 @@
             
             <div id="searchButtonContainer">
                 <input type="text" id="fname" name="fname">
-                <button id="addressButton">get</button>
-                <button id="addressTestButton">test</button>
+                <button id="addressButton">loop me</button>
+             
             </div>
-            <div id="videoContainer">
+            <div id="player-container">
+                <div id="player1"></div>
+            </div>
+            <!--<div id="videoContainer">
                 
             
-                <div id="player-container">
-                    <div id="player1"></div>
-                </div>
+                
+
+
+                
+                
                 <div id="containerOption">
                     <button id="minusButton"><i class="fa-solid fa-minus"></i></button>
                     <button id="closeButton"><i class="fa-solid fa-xmark"></i></button>
@@ -58,27 +62,25 @@
                         <input id="elpasedSlider" type="range" value="0" min="0" max="100"/>
                     </div>
 
-                    
-                    <!--<div id="noUiSlider"></div><br>-->
                 </div>
+                
                 <div id="LayerButton-3rd">
                     <button><i class="fa-solid fa-reply"></i></button>
                     <button><i class="fa-solid fa-play"></i></button>
                     <button><i class="fa-solid fa-stop"></i></button>
                 </div>
-            </div>
+                
+            </div>-->
 
         </div>
     </div>
     
     <div id="tempHolder">
-        
     </div>
 
     <script type="module" src="./main.js"></script>
     <script type="module" src="./Video.js"></script>
     <script type="module" src="./TestVideo.js"></script>
-    <script  src="./noUiSlider-15.7.1/dist/nouislider.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     
 </body>

@@ -1,6 +1,4 @@
 
-import noUiSlider from './noUiSlider-15.7.1/dist/nouislider.mjs';
-import Video from "./Video.js";
 import TestVideo from './TestVideo.js';
 
 /*
@@ -38,24 +36,8 @@ var testplayer;
 
 var fromFlag = false;
 
-document.getElementById("fromSlider").addEventListener("mousedown",(e)=>{
-  fromFlag = true;
-})
-
-document.addEventListener("mousemove",(e)=>{
-  //if range slider was getting dragged get it's position 
- 
-  
-  if(fromFlag){
-    document.getElementById("sliderFromBlock").style.width = e.clientX + "px";
-  }
-  
-})
 
 
-window.addEventListener("mouseup",(e)=>{
-  if(fromFlag) fromFlag = false;
-});
 
 
 var manager ={
@@ -80,8 +62,8 @@ var manager ={
   //used as id when assigning Video
   videoCounter: 0, 
 
-  deleteVideo(){
-
+  deleteVideo(id){
+    this.Videos[id] = null;
   },
 
   getVideo(id){
@@ -94,7 +76,6 @@ var manager ={
 
     this.currentVideo.checkCurrentTime();
     this.currentVideo.elpasedSlider.value = this.currentVideo.getCurrentTime() * 100 / this.currentVideo.endTime;
-    console.log(this.currentVideo.getTitle(), this.currentVideo.getCurrentTime());
     //handle a case where this.currentVideo.getCurrentTime() exceeded it's startTime 
     
 
@@ -162,92 +143,49 @@ function onPlayerStateChange(event) {
   */
 }
 function stopVideo() {
-  player.stopVideo();
+  testplayer.stopVideo();
 }
 
 
-let video2; 
-function makeTempVideo(){
 
-  const onlyForNameDiv = document.createElement("div");
-  onlyForNameDiv.setAttribute("id", "onlyForNameDiv");
 
-  const tempHolder = document.getElementById("tempHolder");
-  tempHolder.append(onlyForNameDiv);
 
-  const onPlayerReady = function(event) {
-      event.target.playVideo();
-  }
 
-  let tempPlayer = new YT.Player("onlyForNameDiv", {
-    height: '300',
-    width: '440',
-    videoId: url,
-    events: {
-        'onReady': onPlayerReady,
-    }
-    });
-  iframe = document.getElementById( "onlyForNameDiv");
-  tempHolder.append(iframe);
 
-}
-
-let testV
-let testFlag = false;
-let nameTag;
+//when user click on loop me button, add a TestVideo instance to manger:Object variable 
 document.getElementById("addressButton").addEventListener("click",(event)=>{
-    url = document.getElementById("fname").value;
-
-    function getId(url) {
-        let regex = /(youtu.*be.*)\/(watch\?v=|embed\/|v|shorts|)(.*?((?=[&#?])|$))/gm;
-        return regex.exec(url)[3];
-      }
-
    
-    console.log(getId(url));
-
-    //wrapp allthis into create Video
-
+    //get url from input bar 
+    url = document.getElementById("fname").value;
     
-    //tempVideoPlayer.playVideo();
-    //const name = tempVideoPlayer.getTitle();
-    //tempVideoPlayer.stopVideo();
-    //testV = new Video(getId(url), nameTag);
-    //testV.getPlayerTitle();
-    //testFlag = true;
+    const id = getId(url)
 
-    manager.Videos[manager.videoCounter] = new TestVideo(getId(url), manager, manager.videoCounter);
+    //make a new TestVideo with retrived Youtube video Id from url 
+    manager.Videos[manager.videoCounter] = new TestVideo(id, manager, manager.videoCounter);
+    
+    //make temporary iframe to get title of TestVideo
+    getTitle(manager.videoCounter)
+    //increase current number of TestVideos that manager holds 
     manager.videoCounter++;
-    
-
-    //video2 = new TestVideo(getId(url), manager);
-    //create iframe tag 
-    
-    //put src 
-    //setTimeout(console.log(testV.getPlayerTitle()),5000)
+    //make  input bar to be empty 
+    document.getElementById("fname").value = "";
+   
 });
 
-/*
-if(testFlag){
-  setInterval(console.log(testV.getPlayerTitle()),300);
-  testFlag = false;
-}
-*/
 
-
+//temporary id 
 let playerCnt = 2;
-//testing premaking iframe then passes Dom element of anchored player
-//and created player instance into another class
-document.getElementById("addressTestButton").addEventListener("click",(event)=>{
-  url = document.getElementById("fname").value;
 
-  console.log(getId(url));
+//making temporary ifram to get it's title 
+//iframe's title attribute only gets displayed when it starts playing 
+function getTitle(videoCounter){
+  url = document.getElementById("fname").value;
 
   const div = document.createElement("div");
   div.setAttribute("id", `player${playerCnt}`);
 
-  //document.getElementById("player-container").appendChild(div);
-  
+  document.getElementById("tempHolder").appendChild(div);
+
   function onYouTubeIframeAPIReady() {
     
     testplayer = new YT.Player(div.getAttribute("id"), {
@@ -268,44 +206,42 @@ document.getElementById("addressTestButton").addEventListener("click",(event)=>{
     onYouTubeIframeAPIReady();
 
     const iframe = document.getElementById(`player${playerCnt}`);
+
+    const observer = new MutationObserver(() => {
+      //console.log('title has changed', iframe.getAttribute("title"));
+      if(iframe.getAttribute("title") != "YouTube video player"){
+        manager.getVideo(videoCounter).setTitle(iframe.getAttribute("title"));
+      }
+     
+      //console.log(manager);
+      //testplayer does not need to be played 
+      testplayer.stopVideo();
+      //delete testplayer's iframe 
+      document.getElementById("tempHolder").removeChild(iframe);
+    });
+    
+    //get changed title from testplayer when it's title change 
+    observer.observe(iframe, {
+      attributes: true,
+      attributeFilter: ['title'],
+      subtree: true
+    });
+    
     playerCnt++
-    //then pass it to Video class 
-    video2 = new Video(testplayer, iframe);
+
+}
 
 
-})
 
+
+
+
+//getting Id for given url link
+//@url:String the url link
 function getId(url) {
   let regex = /(youtu.*be.*)\/(watch\?v=|embed\/|v|shorts|)(.*?((?=[&#?])|$))/gm;
   return regex.exec(url)[3];
 }
-
-/*
-document.getElementById("minusButton").addEventListener("click", ()=>{
-  function onYouTubeIframeAPIReady() {
-    
-    player1 = new YT.Player('player1', {
-      height: '390',
-      width: '480',
-      videoId: 'llGkzOG0pvo',
-      playerVars: {
-        'playsinline': 1,
-      },
-      events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
-      },
-      
-    });
-  
-  }
-  onYouTubeIframeAPIReady();
-
-})
-
-
-
-*/
 
 
 
@@ -313,19 +249,13 @@ document.getElementById("minusButton").addEventListener("click", ()=>{
 (function () {
 
   function youTubePlayerDisplayInfos() {
-    //console.log("display")
-    //window.removeEventListener('load', init);
-    //window.onload = null;
-
     if(manager.currentVideo){
       manager.display();
     }
   }
-
   function init() {
-
     // Set timer to display infos
-    setInterval(youTubePlayerDisplayInfos, 500);
+    setInterval(youTubePlayerDisplayInfos, 100);
   }
 
   if (window.addEventListener) {

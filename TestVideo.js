@@ -37,7 +37,15 @@ class TestVideo{
 
     elpaseSliderFlag;
 
+    manager;
 
+    /** represents the title of iframe, it will be assigned after temporary iframe being played */
+    title;
+
+    //
+    //@url:Number id of Youtube video
+    //@manger:Object a variable that manages all videos 
+    //@videoCounter:Number the number of total videos in manager
     constructor(url, manager, videoCounter){
         //init function for event on iframe first, it will be needed when initializing iframe
         this.outerFunctions = {};
@@ -47,6 +55,9 @@ class TestVideo{
         this.clickedOnPlayAndPause = false;
         this.playPauseButtonFlag = false;
         this.elpaseSliderFlag = false;
+        this.title = "";
+
+        this.manager = manager;
 
         //1.init function that will be used by onPlayerReady and onPlayerStateChange
         //play: when it is getting played, it needs to keep updating this.elpasedTime
@@ -122,7 +133,7 @@ class TestVideo{
         videoContainer.classList.add("Container");
 
         const div = document.createElement("div");
-        //div.setAttribute("id", `testDIV${videoCounter}`);
+     
         div.setAttribute("id", `testDIV${videoCounter}`);
 
         //tempHolder's style is always none 
@@ -130,6 +141,7 @@ class TestVideo{
 
         tempHolder.append(div);
        
+        console.log("TestVideo id: ", url);
 
         this.player = new YT.Player(`testDIV${videoCounter}`, {
             height: '300',
@@ -169,19 +181,23 @@ class TestVideo{
         
 
         let closeButton = document.createElement("button");
-        closeButton.setAttribute("id", "closeButton");
+        LayerButton1st.appendChild(closeButton);
+        closeButton.setAttribute("id", "close-Button");
         let closeI = document.createElement("i");
         closeI.setAttribute("class", "fa-solid fa-xmark");
         closeButton.appendChild(closeI);
-        LayerButton1st.appendChild(closeButton);
+        closeButton.addEventListener("click", this.getEventFunctions("close"));
        
 
         let minButton = document.createElement("button");
-        minButton.setAttribute("id", "minButton");
+        LayerButton1st.appendChild(minButton);
+        minButton.setAttribute("id", "min-Button");
+        minButton.addEventListener("click", this.getEventFunctions("min"));
+
         let minI = document.createElement("i");
         minI.setAttribute("class", "fa-solid fa-minus");
         minButton.appendChild(minI);
-        LayerButton1st.appendChild(minButton);
+      
        
 
         LayerButton1st.classList.add("LayerButton-1st");
@@ -221,7 +237,7 @@ class TestVideo{
 
         let replayButton = document.createElement("button");
         LayerButton3rd.appendChild(replayButton);
-        replayButton.setAttribute("id", `replayButton-${this.id}`);
+        replayButton.setAttribute("id", `replay-Button-${this.id}`);
         let replyI = document.createElement("i");
         replyI.setAttribute("class", "fa-solid fa-reply");
         replayButton.appendChild(replyI);
@@ -229,7 +245,7 @@ class TestVideo{
 
         let playButton = document.createElement("button");
         LayerButton3rd.appendChild(playButton);
-        playButton.setAttribute("id", `playButton-${this.id}`);
+        playButton.setAttribute("id", `play-Button-${this.id}`);
         let playI = document.createElement("i");
         playI.setAttribute("class", "fa-solid fa-play");
         playButton.appendChild(playI);
@@ -237,7 +253,7 @@ class TestVideo{
 
         let stopButton = document.createElement("button");
         LayerButton3rd.appendChild(stopButton);
-        stopButton.setAttribute("id", `stopButton-${this.id}`);
+        stopButton.setAttribute("id", `stop-Button-${this.id}`);
         let stopI = document.createElement("i");
         stopI.setAttribute("class", "fa-solid fa-stop");
         stopButton.appendChild(stopI);
@@ -247,39 +263,7 @@ class TestVideo{
         //LayerButton3rd.appendChild(playButton, stopButton, replayButton);
         
         LayerButton3rd.classList.add("LayerButton-3rd")
-
-        //add LayerButton3rd to videoContainer
-        
-
-        /*
-        const LayerButton4th = document.createElement("div");
-        LayerButton4th.setAttribute("id", "LayerButton4th");
-        
-        const startTimeInput = document.createElement("input");
-        startTimeInput.setAttribute("id", "startTimeInput");
-
-        let startTimeButton = document.createElement("button");
-        startTimeButton.setAttribute("id", "startTimeButton");
-        startTimeButton.textContent = "startTime";
-        startTimeButton.addEventListener("click",this.getEventFunctions("startTime"));
-
-        const endTimeInput = document.createElement("input");
-        endTimeInput.setAttribute("id", "endTimeInput");
-
-        let endTimeButton = document.createElement("button");
-        endTimeButton.setAttribute("id", "endTimeButton");
-        endTimeButton.textContent = "endTime";
-        endTimeButton.addEventListener("click",this.getEventFunctions("endTime"));
-
-        LayerButton4th.appendChild(startTimeInput);
-        LayerButton4th.appendChild(startTimeButton);
-        LayerButton4th.appendChild(endTimeInput);
-        LayerButton4th.appendChild(endTimeButton);
-        */
-
-        
-        
-
+     
         this.initFlag = true;
     }
 
@@ -292,20 +276,100 @@ class TestVideo{
         switch (buttonName) {
             case "min":
                 console.log("min");
-                //get title 
+                const minEvent = ()=>{
+                    const videoContainer = document.getElementById(`videoContainer${this.id}`);
 
-                break;
+                    //if iframe was visible then make it display, none and change button to square
+                    //temporaily remove iframe by accessing videoContainer + id > playerContainer to have display, none
+                    if(videoContainer.children[1].children[0].style.display != "none"){
+                      
+                        videoContainer.children[0].children[1].children[0].setAttribute("class", "fa-regular fa-square");
+                        videoContainer.children[1].children[0].style.display = "none";
+
+                        //create text node and insert this video's title 
+                        const textNode = document.createElement("text");
+                        textNode.textContent = this.title;
+                        //display title where iframe was at.
+                        videoContainer.children[1].append(textNode);
+                        //make videoContainer's height smaller
+                        videoContainer.style.height = "120px";
+                    }
+                    //change button back to min 
+                    //make iframe back to visible and make title to disappear
+                    else{
+                       
+                        videoContainer.children[0].children[1].children[0].setAttribute("class", "fa-solid fa-minus");
+                        videoContainer.children[1].children[0].style.display = "block";
+                        videoContainer.children[1].removeChild(videoContainer.children[1].children[1]);
+                        videoContainer.style.height = "480px";
+                    }
+
+                    
+                }
+                return minEvent;
         
             case "close":
                 console.log("close");
                 //remove all anchored events 
                 //and remove all Dom elements then notify manager to delete current TestVideo
-                break;
+
+                const closeEvent = ()=>{
+                    //get this Video's most outer tag; named videoContainer+this.id
+                    //do reverse level traversal and delete all of the nodes 
+                    const videoContainer = document.getElementById(`videoContainer${this.id}`);
+            
+                    //make stack and queue for traversal 
+                    let stack = [];
+                    let queue = [];
+
+                    queue.push(videoContainer);
+                    while(queue.length > 0){
+                        const node = queue[0];
+                        queue.splice(0,1);
+
+                        //if node has children, enqueue them
+                        if(node && node.children > 0){
+                            Array.from(node).children.array.forEach(element => {
+                                queue.push(element);
+                            });
+                        //if node does not have a children, delete that Dom Element
+                        }else{
+
+                            //if it's a button type, delete it's attached event;
+                            if(node.nodeName == "BUTTON"){
+                                //find button's event name by it's id; buttonName will be string 
+                                const buttonName = node.getAttribute(id).slice('-')[0];
+                                node.removeEventListener("click", getEventFunctions(buttonName));
+                            }
+                            //delete Dom element
+                            node.remove();
+                        }
+
+                        stack.push(node);
+                    }
+                    //pop stack and delete those Dom Element; 
+                    while(stack.length > 0){
+                        const node = stack.pop();
+                        //if it's a button type, delete it's attached event;
+                        if(node.nodeName == "BUTTON"){
+                            //find button's event name by it's id; buttonName will be string 
+                            const buttonName = node.getAttribute(id).slice('-')[0];
+                            node.removeEventListener("click", getEventFunctions(buttonName));
+                        }
+                        //delete Dom element
+                        node.remove();
+                    }
+
+                    //let manager to delete this instance 
+                    this.manager.deleteVideo(this.id);
+
+                    }
+                return closeEvent;
 
             case "play":
                 
                 const playEvent = ()=>{
-                    const playButtonDomElement = document.getElementById(`playButton-${this.id}`);
+                    const playButtonDomElement = document.getElementById(`play-Button-${this.id}`);
 
                     //pause button has been clicked, change into play button 
                     if(!this.clickedOnPlayAndPause && this.initFlag == true){
@@ -395,9 +459,8 @@ class TestVideo{
         return this.player.getCurrentTime();
     }
 
-    getTitle(){
-        const iframe = document.getElementById( `testDIV${this.id}`);
-        return iframe.getAttribute("title");
+    setTitle(title){
+       this.title = title;
     }
 
     checkCurrentTime(){
@@ -417,7 +480,7 @@ class TestVideo{
      * @param {*bool} clickedOnPlayAndPause flag 
      */
     changePlayPauseButton(clickedOnPlayAndPause){
-        const playButtonDomElement = document.getElementById(`playButton-${this.id}`);
+        const playButtonDomElement = document.getElementById(`play-Button-${this.id}`);
         if(clickedOnPlayAndPause){
             playButtonDomElement.children[0].setAttribute("class", "fa-solid fa-play")
             //set clickedOnPlayAndPause to true

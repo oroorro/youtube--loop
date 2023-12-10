@@ -10,6 +10,8 @@ firebase-debug.*.log*
 # Firebase cache
 .firebase/
 
+noUiSlider-15.7.1/
+
 # Firebase config
 
 # Uncomment this if you'd like others to create their own Firebase project.
