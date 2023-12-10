@@ -21,10 +21,15 @@ class TestVideo{
 
     id;
 
-    clickedOnPlayAndPause;
+    isButtonOnPlay;
 
     initFlag;
 
+
+    fromButtonFlag;
+
+    //True when it is playing
+    //False when it is paused.
     playPauseButtonFlag;
 
     // input type range that denotes current elpase time of the Video
@@ -52,16 +57,18 @@ class TestVideo{
         this.innerFunctions = {};
 
         this.id = videoCounter;
-        this.clickedOnPlayAndPause = false;
+        this.isButtonOnPlay = false;
         this.playPauseButtonFlag = false;
         this.elpaseSliderFlag = false;
         this.title = "";
+        this.fromButtonFlag = false;
 
         this.manager = manager;
 
         //1.init function that will be used by onPlayerReady and onPlayerStateChange
         //play: when it is getting played, it needs to keep updating this.elpasedTime
         this.innerFunctions.playVideo = ()=>{
+            console.log("playing video...");
             this.player.playVideo();
             manager.setCurrentlyPlaying(this);
         }
@@ -81,16 +88,60 @@ class TestVideo{
             event.target.pauseVideo();
         }
 
+
+
+        /**
+         * 
+            -1 – unstarted
+            0 – ended
+            1 – playing
+            2 – paused
+            3 – buffering
+            5 – video cued
+         */
         this.onPlayerStateChange = (event) => {
+
+            console.log("onPlayerStateChange: ", event.data, this.playPauseButtonFlag, this.isButtonOnPlay);
+            //when user click on paused video 
             if(event.data == YT.PlayerState.PLAYING){
                 //when the video starts playing, inform manager
                 //also, if newly set startTime has exceeded currentTime, use seekTo
-                console.log("playing", this.player.getDuration());
+                //console.log("playing", this.player.getDuration());
                 this.endTime = this.player.getDuration();
                 this.PlayerCurrentState = "PLAYING";
-                if(!this.playPauseButtonFlag){
-                    this.changePlayPauseButton(this.clickedOnPlayAndPause);
-                }  
+                //if(this.playPauseButtonFlag){
+                    
+                    //this.changePlayPauseButton(this.clickedOnPlayAndPause);
+                //}  
+
+                //from YtB iframe > always call changePlayPauseButton with clickedOnPlayAndPause false so it will always 
+                //change into pause button, we alawys need to make the button into pause 
+                if(!this.fromButtonFlag){
+                    this.changePlayPauseButton(false);
+                    
+                }
+                //from Button:DomElement it will be either was pause/play 
+                else{
+                    //if Button:DomElement was pause then call changePlayPauseButton with clickedOnPlayAndPause false
+                    //so then Button:DomElement can be play 
+                    if(this.playPauseButtonFlag){
+                        this.changePlayPauseButton(false);
+                    }
+                    //if Button:DomElement was play then call changePlayPauseButton with clickedOnPlayAndPause true
+                    //so then Button:DomElement can be pause
+                    else{
+                        this.changePlayPauseButton(true);
+                    }
+
+                    this.fromButtonFlag = false;
+                }
+                
+
+
+                
+
+
+
 
                 if(this.elpaseSliderFlag){
                     this.player.seekTo((this.elpasedSlider.value * this.endTime) / 100 , true);
@@ -107,15 +158,20 @@ class TestVideo{
             else if(event.data == YT.PlayerState.PAUSED){
                 this.PlayerCurrentState = "PAUSED";
                 if(!this.playPauseButtonFlag){
-                    this.changePlayPauseButton(this.clickedOnPlayAndPause);
+                    this.changePlayPauseButton(true);
                 }  
+
+
+
+
+                this.playPauseButtonFlag = false;
             }
             else if (event.data == YT.PlayerState.ENDED){
                 this.PlayerCurrentState = "ENDED";
                 this.innerFunctions.playVideo();
             }
             
-            this.playPauseButtonFlag = false;
+            //this.playPauseButtonFlag = false;
         }
 
         //wrapper for all layers 
@@ -141,7 +197,7 @@ class TestVideo{
 
         tempHolder.append(div);
        
-        console.log("TestVideo id: ", url);
+        
 
         this.player = new YT.Player(`testDIV${videoCounter}`, {
             height: '300',
@@ -156,11 +212,7 @@ class TestVideo{
             },
             
         });
-        
-        
-        //set currentTime 
-
-        
+         
 
         //iframe element tag 
         //const iframe = document.getElementById("testDIV");
@@ -249,6 +301,8 @@ class TestVideo{
         let playI = document.createElement("i");
         playI.setAttribute("class", "fa-solid fa-play");
         playButton.appendChild(playI);
+
+        //only giving play event to a playbutton that can be changed into pause button > cause of an issue
         playButton.addEventListener("click", this.getEventFunctions("play"));
 
         let stopButton = document.createElement("button");
@@ -372,26 +426,37 @@ class TestVideo{
                     const playButtonDomElement = document.getElementById(`play-Button-${this.id}`);
 
                     //pause button has been clicked, change into play button 
-                    if(!this.clickedOnPlayAndPause && this.initFlag == true){
+                    if(!this.isButtonOnPlay && this.initFlag == true){
                         console.log("play");
-                        playButtonDomElement.children[0].setAttribute("class", "fa-solid fa-pause")
-                        //make player to pause
-                        this.player.playVideo();
+                        //playButtonDomElement.children[0].setAttribute("class", "fa-solid fa-pause")
+
                         //set clickedOnPlayAndPause to true
-                        this.clickedOnPlayAndPause = true;
+                        this.isButtonOnPlay = true;
+
+                        this.playPauseButtonFlag = true;
+
+                        //make player to play
+                        this.player.playVideo();
+                        
                     }
                     //play button has been clicked, change into pause button 
-                    else if(this.clickedOnPlayAndPause && this.initFlag == true){
+                    else if(this.isButtonOnPlay && this.initFlag == true){
                         console.log("pause");
                         //change logo on button to pause; <i> tag under playbutton <button>
-                        playButtonDomElement.children[0].setAttribute("class", "fa-solid fa-play")
+                        //playButtonDomElement.children[0].setAttribute("class", "fa-solid fa-play")
+
+                        //set clickedOnPlayAndPause to true
+                        this.isButtonOnPlay = false;
+
+                        this.playPauseButtonFlag = false;
+
                         //make player to pause
                         this.player.pauseVideo();
-                        //set clickedOnPlayAndPause to true
-                        this.clickedOnPlayAndPause = false;
+                        
                     }
 
-                    this.playPauseButtonFlag = true;
+                    //this.playPauseButtonFlag = true;
+                    this.fromButtonFlag = true;
                 }
                 return playEvent;
           
@@ -480,15 +545,19 @@ class TestVideo{
      * @param {*bool} clickedOnPlayAndPause flag 
      */
     changePlayPauseButton(clickedOnPlayAndPause){
+
+        console.log("changePlayPauseButton ", clickedOnPlayAndPause);
         const playButtonDomElement = document.getElementById(`play-Button-${this.id}`);
         if(clickedOnPlayAndPause){
+            console.log("change button to play icon");
             playButtonDomElement.children[0].setAttribute("class", "fa-solid fa-play")
             //set clickedOnPlayAndPause to true
-            this.clickedOnPlayAndPause = false;
+            this.isButtonOnPlay = false;
         }else{
+            console.log("change button to pause icon");
             playButtonDomElement.children[0].setAttribute("class", "fa-solid fa-pause")
             //set clickedOnPlayAndPause to true
-            this.clickedOnPlayAndPause = true;
+            this.isButtonOnPlay = true;
         }
 
     }
